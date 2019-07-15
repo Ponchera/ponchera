@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { observable, action } from 'mobx'
 import { APP_KEY, BASE_URL } from 'react-native-dotenv'
+import api from '../api'
 
 class AppStore {
   @observable socket
@@ -14,13 +14,13 @@ class AppStore {
   @action
   login = (username, password) => {
     return new Promise((resolve, reject) => {
-      axios.post(`${BASE_URL}v1/auth/login`, {
+      api.auth.login({
         username,
         password,
         key: APP_KEY,
       })
         .then(({ data, headers }) => {
-          this.auth = { user: data, token: headers.authorization }
+          this.auth = { user: data, token: headers.Authorization }
           resolve()
         })
         .catch((err) => {
