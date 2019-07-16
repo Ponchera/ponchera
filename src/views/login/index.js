@@ -18,6 +18,8 @@ export default class Login extends Component {
 
   render() {
     const { login } = this.store
+    const { navigate } = this.props.navigation
+
     return (
       <View>
         <List>
@@ -51,9 +53,7 @@ export default class Login extends Component {
             onPress={() => {
               login(this.state.username, this.state.password)
                 .then(() => {
-                })
-                .catch((err) => {
-                  err.response && console.warn(err.response.data.message)
+                  navigate('TabNavigator')
                 })
             }}
           >

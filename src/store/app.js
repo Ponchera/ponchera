@@ -1,6 +1,7 @@
 import { observable, action } from 'mobx'
-import { APP_KEY, BASE_URL } from 'react-native-dotenv'
+import { APP_KEY } from 'react-native-dotenv'
 import api from '../api'
+import StorageService from '../services/storage'
 
 class AppStore {
   @observable socket
@@ -8,23 +9,28 @@ class AppStore {
 
   constructor() {
     this.socket = null
-    this.auth = null
+    this.auth = StorageService.get('auth', null)
   }
 
   @action
   login = (username, password) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       api.auth.login({
         username,
         password,
         key: APP_KEY,
       })
-        .then(({ data, headers }) => {
-          this.auth = { user: data, token: headers.Authorization }
+        .then((res) => {
+          const auth = {
+            isAuthed: true,
+            user: res.data.data,
+            token: res.headers.authorization,
+          }
+          this.auth = auth
+          StorageService.set('auth', auth)
           resolve()
         })
-        .catch((err) => {
-          reject(err)
+        .catch(() => {
         })
     })
   }
