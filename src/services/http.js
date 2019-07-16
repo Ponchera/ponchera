@@ -1,13 +1,15 @@
 import axios from 'axios'
 import { BASE_URL, API_PREFIX } from 'react-native-dotenv'
+import { Toast } from '@ant-design/react-native'
 import storageService from './storage'
+import NavigationService from './navigation'
 
 const tip = msg => {
-  // 提示错误
+  Toast.info(msg)
 }
 
 const toLogin = () => {
-  // 返回登录页
+  NavigationService.navigate('Login')
 }
 
 let instance = axios.create({
@@ -41,15 +43,16 @@ instance.interceptors.response.use((response) => {
   if (err.response) {
     switch (err.response.status) {
       case 401:
-        // 提示错误并跳转登录
+        tip(err.response.data.message)
+        toLogin()
         break
       default:
-        // 提示具体错误err.response.data.message
+        tip(err.response.data.message)
         break
     }
   } else {
-    // 提示err.message或者直接
-    // 认为应用为断网状态
+    // 提示错误或者直接认为应用为断网状态
+    tip(err.message)
   }
   return Promise.reject(err)
 })
