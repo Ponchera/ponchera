@@ -20,7 +20,7 @@ export default createStackNavigator(
   },
   {
     headerMode: 'screen',
-    initialRouteName: 'Login',
+    initialRouteName: 'TabNavigator',
     mode: 'modal',
     defaultNavigationOptions: {
       header: null

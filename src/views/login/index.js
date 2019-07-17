@@ -9,7 +9,6 @@ export default class Login extends Component {
 
   constructor(props) {
     super(props)
-    this.store = this.props.appStore
     this.state = {
       username: '',
       password: '',
@@ -17,7 +16,7 @@ export default class Login extends Component {
   }
 
   render() {
-    const { login } = this.store
+    const { login } = this.props.appStore
     const { navigate } = this.props.navigation
 
     return (

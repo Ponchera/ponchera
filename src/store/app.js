@@ -6,10 +6,12 @@ import StorageService from '../services/storage'
 class AppStore {
   @observable socket
   @observable auth
+  @observable conversations
 
   constructor() {
     this.socket = null
     this.auth = StorageService.get('auth', null)
+    this.conversations = StorageService.get('conversations', null)
   }
 
   @action
@@ -29,6 +31,36 @@ class AppStore {
           this.auth = auth
           StorageService.set('auth', auth)
           resolve()
+        })
+        .catch(() => {
+        })
+    })
+  }
+
+  @action
+  indexConversation = () => {
+    api.conversations.index()
+      .then((res) => {
+        this.conversations = res.data.data.items
+        StorageService.set('conversations', this.conversations)
+      })
+      .catch(() => {
+      })
+  }
+
+  @action
+  createConversation = (type, members) => {
+    return new Promise((resolve) => {
+      api.conversations.create({ type, members })
+        .then((res) => {
+          const conversation = res.data.data
+          const targetConversation = this.conversations
+            .find(item => item.cid === conversation.cid)
+          if (!targetConversation) {
+            this.conversations = [conversation, ...this.conversations]
+          }
+          StorageService.set('conversations', this.conversations)
+          resolve(conversation)
         })
         .catch(() => {
         })
