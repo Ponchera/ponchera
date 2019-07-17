@@ -1,12 +1,12 @@
 import { createBottomTabNavigator } from 'react-navigation'
-import Home from '../views/home'
-import Contact from '../views/contact'
+import ConversationList from '../views/conversation/conversation-list'
+import ContactList from '../views/contact/contact-list'
 import Profile from '../views/profile'
 
 export default createBottomTabNavigator(
   {
-    Home: Home,
-    Contact: Contact,
+    ConversationList: ConversationList,
+    ContactList: ContactList,
     Profile: Profile,
   },
   {

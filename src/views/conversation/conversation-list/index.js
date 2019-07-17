@@ -5,11 +5,11 @@ import { observer, inject } from 'mobx-react'
 
 @inject(['appStore'])
 @observer
-export default class Home extends Component {
+export default class Conversation extends Component {
 
   static navigationOptions = {
-    headerTitle: '消息',
-    tabBarLabel: '消息',
+    headerTitle: '聊天',
+    tabBarLabel: '聊天',
     tabBarIcon: ({focused, tintColor}) => (
       <Icon name="message" size="md" color={tintColor} />
     ),
@@ -33,7 +33,7 @@ export default class Home extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>消息</Text>
+        <Text>聊天</Text>
       </View>
     )
   }
