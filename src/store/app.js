@@ -1,5 +1,6 @@
 import { observable, action } from 'mobx'
-import { APP_KEY } from 'react-native-dotenv'
+import { APP_KEY, BASE_URL } from 'react-native-dotenv'
+import io from 'socket.io-client'
 import api from '../api'
 import StorageService from '../services/storage'
 
@@ -11,13 +12,36 @@ class AppStore {
 
   constructor() {
     this.initState()
+    this.initSocket()
   }
 
   async initState() {
-    this.socket = null
     this.auth = await StorageService.get('auth', null)
     this.conversations = await StorageService.get('conversations', [])
     this.contacts = await StorageService.get('contacts', [])
+  }
+
+  async initSocket() {
+    const auth = await this.getAuth()
+    if (!auth || !auth.isAuthed) {
+      // navigate('Login')
+      return
+    }
+    this.socket = io(BASE_URL)
+    this.socket.on('connect', () => {
+      this.socket
+        .emit('authenticate', { token: auth.token })
+        .on('authenticated', () => {
+          this.socket.on('message', (payloads) => {
+            console.warn(payloads)
+          })
+        })
+        .on('unauthorized', (err) => {
+          console.warn(JSON.stringify(err.data))
+          if (err.data.type === 'UnauthorizedError' || err.data.code === 'invalid_token') {
+          }
+        })
+    })
   }
 
   @action
@@ -87,6 +111,11 @@ class AppStore {
       })
       .catch(() => {
       })
+  }
+
+  @action
+  sendMessage = (messages) => {
+    this.socket.emit('message', messages)
   }
 }
 

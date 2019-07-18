@@ -32,9 +32,20 @@ export default class Conversation extends Component {
   }
 
   render() {
+    const { conversations } = this.props.appStore
+
     return (
-      <View style={styles.container}>
-        <Text>聊天</Text>
+      <View>
+        {
+          conversations
+            ? (
+              conversations.map((conversation) => {
+                return <Text key={conversation.cid}>{conversation.cid}</Text>
+              })
+            ) : (
+              <Text></Text>
+            )
+        }
       </View>
     )
   }

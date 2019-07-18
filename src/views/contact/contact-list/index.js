@@ -34,7 +34,7 @@ export default class Contact extends Component {
           contacts
             ? (
               contacts.map((contact) => {
-                return <Text>{contact}</Text>
+                return <Text key={contact}>{contact}</Text>
               })
             ) : (
               <Text></Text>
