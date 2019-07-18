@@ -17,9 +17,9 @@ let instance = axios.create({
   timeout: 1000 * 60 * 2,
 })
 
-instance.interceptors.request.use((request) => {
+instance.interceptors.request.use(async (request) => {
   // 若用户已登录，则给请求头中带上令牌
-  const auth = storageService.get('auth', null)
+  const auth = await storageService.get('auth', null)
   if (auth && auth.isAuthed) {
     request.headers['Authorization'] = auth.token
   }
@@ -28,11 +28,11 @@ instance.interceptors.request.use((request) => {
   return Promise.reject(err)
 })
 
-instance.interceptors.response.use((response) => {
+instance.interceptors.response.use(async (response) => {
   // 判断响应中是否有令牌，如果有就替换掉本地的
   const token = response.headers.authorization
   if (token) {
-    let auth = storageService.get('auth', null)
+    let auth = await storageService.get('auth', null)
     if (auth && auth.isAuthed) {
       auth.token = token
       storageService.set('auth', auth)

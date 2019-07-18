@@ -7,11 +7,22 @@ class AppStore {
   @observable socket
   @observable auth
   @observable conversations
+  @observable contacts
 
   constructor() {
+    this.initState()
+  }
+
+  async initState() {
     this.socket = null
-    this.auth = StorageService.get('auth', null)
-    this.conversations = StorageService.get('conversations', null)
+    this.auth = await StorageService.get('auth', null)
+    this.conversations = await StorageService.get('conversations', [])
+    this.contacts = await StorageService.get('contacts', [])
+  }
+
+  @action
+  getAuth = async () => {
+    return await StorageService.get('auth', null)
   }
 
   @action
@@ -65,6 +76,17 @@ class AppStore {
         .catch(() => {
         })
     })
+  }
+
+  @action
+  indexContact = () => {
+    api.contacts.index()
+    .then((res) => {
+        this.contacts = res.data.data.items
+        StorageService.set('contacts', this.contacts)
+      })
+      .catch(() => {
+      })
   }
 }
 

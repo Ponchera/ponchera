@@ -1,10 +1,10 @@
 import { AsyncStorage } from 'react-native'
 
 export default class Storage {
-  static get(key, defaultValue) {
+  static async get(key, defaultValue) {
     let stored
     try {
-      stored = AsyncStorage.getItem(key)
+      stored = await AsyncStorage.getItem(key)
       stored = JSON.parse(stored)
     } catch (err) {
       stored = null

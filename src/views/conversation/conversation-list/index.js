@@ -10,7 +10,7 @@ export default class Conversation extends Component {
   static navigationOptions = {
     headerTitle: '聊天',
     tabBarLabel: '聊天',
-    tabBarIcon: ({focused, tintColor}) => (
+    tabBarIcon: ({ focused, tintColor }) => (
       <Icon name="message" size="md" color={tintColor} />
     ),
   }
@@ -19,10 +19,11 @@ export default class Conversation extends Component {
     super(props)
   }
 
-  componentDidMount() {
-    const { auth, indexConversation } = this.props.appStore
+  async componentDidMount() {
+    const { getAuth, indexConversation } = this.props.appStore
     const { navigate } = this.props.navigation
 
+    const auth = await getAuth()
     if (!auth || !auth.isAuthed) {
       navigate('Login')
       return
