@@ -49,11 +49,9 @@ export default class Login extends Component {
           </InputItem>
           <Button
             type="primary"
-            onPress={() => {
-              login(this.state.username, this.state.password)
-                .then(() => {
-                  navigate('TabNavigator')
-                })
+            onPress={async () => {
+              await login(this.state.username, this.state.password)
+              navigate('TabNavigator')
             }}
           >
             登录

@@ -17,28 +17,27 @@ export default class Contact extends Component {
 
   constructor(props) {
     super(props)
+    this.state = {
+      contacts: []
+    }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { indexContact } = this.props.appStore
 
-    indexContact()
+    const contacts = await indexContact()
+    this.setState({
+      contacts
+    })
   }
 
   render() {
-    const { contacts } = this.props.appStore
-
     return (
       <View>
         {
-          contacts
-            ? (
-              contacts.map((contact) => {
-                return <Text key={contact}>{contact}</Text>
-              })
-            ) : (
-              <Text></Text>
-            )
+          this.state.contacts.map((contact) => {
+            return <Text key={contact}>{contact}</Text>
+          })
         }
       </View>
     )

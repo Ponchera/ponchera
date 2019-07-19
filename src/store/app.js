@@ -6,23 +6,13 @@ import StorageService from '../services/storage'
 
 class AppStore {
   @observable socket
-  @observable auth
-  @observable conversations
-  @observable contacts
 
   constructor() {
-    this.initState()
     this.initSocket()
   }
 
-  async initState() {
-    this.auth = await StorageService.get('auth', null)
-    this.conversations = await StorageService.get('conversations', [])
-    this.contacts = await StorageService.get('contacts', [])
-  }
-
-  async initSocket() {
-    const auth = await this.getAuth()
+  initSocket = () => {
+    const auth = await this.getState('auth')
     if (!auth || !auth.isAuthed) {
       // navigate('Login')
       return
@@ -45,72 +35,61 @@ class AppStore {
   }
 
   @action
-  getAuth = async () => {
-    return await StorageService.get('auth', null)
+  getState = async (key) => {
+    return await StorageService.get(key, null)
   }
 
   @action
-  login = (username, password) => {
-    return new Promise((resolve) => {
-      api.auth.login({
-        username,
-        password,
-        key: APP_KEY,
-      })
-        .then((res) => {
-          const auth = {
-            isAuthed: true,
-            user: res.data.data,
-            token: res.headers.authorization,
-          }
-          this.auth = auth
-          StorageService.set('auth', auth)
-          resolve()
-        })
-        .catch(() => {
-        })
+  login = async (username, password) => {
+    const res = await api.auth.login({
+      username,
+      password,
+      key: APP_KEY,
     })
-  }
-
-  @action
-  indexConversation = () => {
-    api.conversations.index()
-      .then((res) => {
-        this.conversations = res.data.data.items
-        StorageService.set('conversations', this.conversations)
-      })
       .catch(() => {
       })
+    const auth = {
+      isAuthed: true,
+      user: res.data.data,
+      token: res.headers.authorization,
+    }
+    StorageService.set('auth', auth)
   }
 
   @action
-  createConversation = (type, members) => {
-    return new Promise((resolve) => {
-      api.conversations.create({ type, members })
-        .then((res) => {
-          const conversation = res.data.data
-          const targetConversation = this.conversations
-            .find(item => item.cid === conversation.cid)
-          if (!targetConversation) {
-            this.conversations = [conversation, ...this.conversations]
-          }
-          StorageService.set('conversations', this.conversations)
-          resolve(conversation)
-        })
-        .catch(() => {
-        })
-    })
-  }
-
-  @action
-  indexContact = () => {
-    api.contacts.index()
-    .then((res) => {
-        this.contacts = res.data.data.items
-        StorageService.set('contacts', this.contacts)
-      })
+  indexConversation = async () => {
+    const res = await api.conversations.index()
       .catch(() => {
       })
+    const conversations = res.data.data.items
+    StorageService.set('conversations', conversations)
+    return conversations
+  }
+
+  @action
+  createConversation = async (type, members) => {
+    const res = await api.conversations.create({ type, members })
+      .catch(() => {
+      })
+    const conversation = res.data.data
+    const conversations = await this.getState('conversations')
+    const targetConversation = conversations
+      .find(item => item.cid === conversation.cid)
+    if (!targetConversation) {
+      conversations = [conversation, ...conversations]
+    }
+    StorageService.set('conversations', conversations)
+    return conversation
+  }
+
+  @action
+  indexContact = async () => {
+    const res = await api.contacts.index()
+      .catch(() => {
+      })
+    const contacts = res.data.data.items
+    StorageService.set('contacts', contacts)
+    return contacts
   }
 
   @action
