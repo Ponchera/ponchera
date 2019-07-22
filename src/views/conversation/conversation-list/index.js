@@ -23,14 +23,7 @@ export default class Conversation extends Component {
   }
 
   async componentDidMount() {
-    const { getState, indexConversation } = this.props.appStore
-    const { navigate } = this.props.navigation
-
-    const auth = await getState('auth')
-    if (!auth || !auth.isAuthed) {
-      navigate('Login')
-      return
-    }
+    const { indexConversation } = this.props.appStore
 
     const conversations = await indexConversation()
     this.setState({

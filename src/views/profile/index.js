@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Icon } from '@ant-design/react-native'
+import { observer, inject } from 'mobx-react'
 
+@inject(['appStore'])
+@observer
 export default class Profile extends Component {
 
   static navigationOptions = {
@@ -10,6 +13,16 @@ export default class Profile extends Component {
     tabBarIcon: ({focused, tintColor}) => (
       <Icon name="user" size="md" color={tintColor} />
     ),
+  }
+
+  constructor(props) {
+    super(props)
+  }
+
+  async componentDidMount() {
+    const { logout } = this.props.appStore
+
+    await logout()
   }
 
   render() {

@@ -17,7 +17,6 @@ export default class Login extends Component {
 
   render() {
     const { login } = this.props.appStore
-    const { navigate } = this.props.navigation
 
     return (
       <View>
@@ -49,9 +48,8 @@ export default class Login extends Component {
           </InputItem>
           <Button
             type="primary"
-            onPress={async () => {
-              await login(this.state.username, this.state.password)
-              navigate('TabNavigator')
+            onPress={() => {
+              login(this.state.username, this.state.password)
             }}
           >
             登录
